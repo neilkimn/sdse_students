@@ -3,17 +3,27 @@ package org.nypl.journalsystem;
 public class Article {
 	int id;
 	String title;
-	int[] author_ids;
+	// int[] author_ids;
+	Author[] authors;
 	String ISSN;
 	
-	Article(int id, String title, int[] ids, String ISSN) {
+	Article(int id, String title, Author[] authors, String ISSN) {
 		this.id = id;
 		this.title = title;
-		this.author_ids = ids;
+		this.authors = authors;
 		this.ISSN = ISSN;
 	}
 	
 	public void display() {
-		System.out.println("ID: " + id+ ", Title: " + title+ ", authors: " + author_ids+ ", ISSN: " + ISSN);
+		// Maybe @Override Author toString to display something else than memory address 
+		System.out.println("ID: " + id+ ", Title: " + title+ ", authors: " + authors+ ", ISSN: " + ISSN);
+	}
+	
+	public Author[] getAuthors() {
+		return authors;
+	}
+	
+	public String getTitle() {
+		return title;
 	}
 }

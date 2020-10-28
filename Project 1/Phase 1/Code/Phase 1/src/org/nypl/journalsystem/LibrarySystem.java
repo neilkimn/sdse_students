@@ -12,23 +12,35 @@ import org.nypl.journalsystem.Journal;
 public class LibrarySystem {
 	
 	Journal[] journals = new Journal[5];
-	HashMap<Integer, String> authors = new HashMap<Integer, String>();
+	HashMap<Integer, Author> authors = new HashMap<Integer, Author>();
+	
+	// Can remove this array and move instantiation to Journal constructor
+	Publisher[] publishers= new Publisher[5];
+	
 	ArrayList<Article> articles = new ArrayList<Article>();
 	
 	public LibrarySystem() {
 
 		// Constructor, so adding the journals to the journal list happens here
-		journals[0] = new Journal("Higher Education", "Springer", "Germany", "0018-1560");
-		journals[1] = new Journal("System", "Elsevier", "Netherlands", "0346-2511");
-		journals[2] = new Journal("Chem", "Elsevier", "Netherlands", "2451-9294");
-		journals[3] = new Journal("Nature", "Nature", "Great Britain", "1476-4687");
-		journals[4] = new Journal("Society", "Springer", "Germany", "0147-2011");
+		publishers[0] = new Publisher("Springer", "Germany");
+		journals[0] = new Journal("Higher Education", publishers[0], "0018-1560");
+		
+		publishers[1] = new Publisher("Elsevier", "Netherlands");
+		journals[1] = new Journal("System", publishers[1], "0346-2511");
+		
+		journals[2] = new Journal("Chem", publishers[1], "2451-9294");
+		
+		publishers[2] = new Publisher("Nature", "Great Britain");
+		journals[3] = new Journal("Nature", publishers[2], "1476-4687");
+		
+		journals[4] = new Journal("Society", publishers[0], "0147-2011");
 		
 	}
 
 	public void load() throws FileNotFoundException, IOException {
 		loadAuthors();
-		articles = loadArticles();
+		loadArticles();
+		
 		connectArticles();
 	}
 	
@@ -58,15 +70,16 @@ public class LibrarySystem {
 		    int id = Integer.parseInt(data[0]);
 		    String name = data[1];
 		    
-		    authors.put(id, name);
+		    Author author = new Author(id, name);
+		    authors.put(id, author);
 		}
 
 	}
 	
-	protected ArrayList<Article> loadArticles() throws FileNotFoundException, IOException {
+	protected void loadArticles() throws FileNotFoundException, IOException {
 		File file = new File("data/Articles.csv");
 		
-		ArrayList<Article> articles = new ArrayList<Article>();
+		// ArrayList<Article> articles = new ArrayList<Article>();
 
 		//TODO: Load articles from file and assign them to appropriate journal
 		
@@ -92,32 +105,47 @@ public class LibrarySystem {
 				a_ids[i] = Integer.parseInt(a_ids_str[i].replaceAll("[^0-9]", ""));
 			}
 			
-			// Method 2, more concise but convoluted
-			// int[] a_ids = a_ids_str.stream(line.split(",")).mapToInt(Integer::parseInt).toArray();  
+			// Convert array of author IDs into classes
+			Author[] article_authors = new Author[a_ids.length];
+			for (int i=0; i < a_ids.length; i++) {
+				article_authors[i] = authors.get(a_ids[i]); 
+			}
+
 
 			String ISSN = data[3].trim();
-			Article article = new Article(id, a_name, a_ids, ISSN);
+			Article article = new Article(id, a_name, article_authors, ISSN);
 			articles.add(article);
 		}
-		return articles;
+		// return articles;
 	}
 	
+	public ArrayList<Author> getAllAuthors() {
+		ArrayList<Author> list_authors = new ArrayList<Author>(authors.values());
+		return list_authors;
+	}
 	
-	public void listContents() {
-		//TODO: Print all journals with their respective articles and authors to the console.
-		for (Journal j : journals) {
-			j.display();
-			j.display_articles();
-			System.out.println(j.is_full_issue());
+	public Journal[] getAllJournals() {
+		return journals;
+	}
+	
+	public ArrayList<Article> getArticlesByAuthor(int id) {
+		ArrayList<Article> list_articles = new ArrayList<Article>();
+		
+		for (Article a : articles) {
+			for (Author au : a.authors) {
+				if(au.equals(id)) {
+					list_articles.add(a);
+				}
+			}
 		}
+		return list_articles;
 	}
 	
+
 	public static final void main(String[] args) throws Exception {
 		LibrarySystem librarySystem = new LibrarySystem();
 		
 		librarySystem.load();
-		librarySystem.listContents();
-		
 		
 		// ArrayList<Article> articles = librarySystem.loadArticles();
 		

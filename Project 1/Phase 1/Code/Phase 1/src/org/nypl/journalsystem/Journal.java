@@ -1,37 +1,39 @@
 package org.nypl.journalsystem;
-import java.io.*;
+
 import java.util.*;
 
 public class Journal {
 	String name;
-	String publisher;
-	String location;
+	Publisher publisher;
 	String ISSN;
 	Boolean full_issue = false;
 	
 	public ArrayList<Article> articles = new ArrayList<Article>();
 	
-	Journal(String name, String publisher, String location, String ISSN) {
+	Journal(String name, Publisher publisher, String ISSN) {
 		this.name = name;
 		this.publisher = publisher;
-		this.location = location;
 		this.ISSN = ISSN;
 	}
 	
-	public void display() {
-		System.out.println("Name: " + name + ", Publisher: " + publisher + ", Location: " + location + ", ISSN: " + ISSN);
+	
+	public ArrayList<Article> getArticles() {
+		return articles;
 	}
 	
-	public void display_articles() {
-		if (!articles.isEmpty()) {
-			for (Article article : articles) {
-				article.display();
-				;
-			}
-		}
+	public String getIssn() {
+		return ISSN;
 	}
 	
-	public Boolean is_full_issue() {
+	public String getName() {
+		return name;
+	}
+	
+	public Publisher getPublisher() {
+		return publisher;
+	}
+	
+	public Boolean isFullIssue() {
 		return full_issue;
 	}
 	
