@@ -133,7 +133,8 @@ public class LibrarySystem {
 		
 		for (Article a : articles) {
 			for (Author au : a.authors) {
-				if(au.equals(id)) {
+				
+				if(au.id == id) {
 					list_articles.add(a);
 				}
 			}
@@ -147,7 +148,6 @@ public class LibrarySystem {
 		
 		librarySystem.load();
 		
-		// ArrayList<Article> articles = librarySystem.loadArticles();
 		
 	}
 }
